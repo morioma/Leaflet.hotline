@@ -219,7 +219,8 @@
 			return [
 				this._palette[paletteIndex],
 				this._palette[paletteIndex + 1],
-				this._palette[paletteIndex + 2]
+				this._palette[paletteIndex + 2],
+				this._palette[paletteIndex + 3] / 255,
 			];
 		},
 
@@ -269,13 +270,21 @@
 					pointStart = path[j - 1];
 					pointEnd = path[j];
 
+					ctx.globalCompositeOperation = "destination-out";
+					ctx.strokeStyle = "#FFF";
+					ctx.beginPath();
+					ctx.moveTo(pointStart.x, pointStart.y);
+					ctx.lineTo(pointEnd.x, pointEnd.y);
+					ctx.stroke();
+					
 					// Create a gradient for each segment, pick start end end colors from palette gradient
 					gradient = ctx.createLinearGradient(pointStart.x, pointStart.y, pointEnd.x, pointEnd.y);
 					gradientStartRGB = this.getRGBForValue(pointStart.z);
 					gradientEndRGB = this.getRGBForValue(pointEnd.z);
-					gradient.addColorStop(0, 'rgb(' + gradientStartRGB.join(',') + ')');
-					gradient.addColorStop(1, 'rgb(' + gradientEndRGB.join(',') + ')');
+					gradient.addColorStop(0, 'rgba(' + gradientStartRGB.join(',') + ')');
+					gradient.addColorStop(1, 'rgba(' + gradientEndRGB.join(',') + ')');
 
+					ctx.globalCompositeOperation = "source-over";
 					ctx.strokeStyle = gradient;
 					ctx.beginPath();
 					ctx.moveTo(pointStart.x, pointStart.y);
